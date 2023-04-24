@@ -5,7 +5,7 @@ module.exports.getCards = (req, res) => {
     .then((cards) => {
       res.send(cards);
     })
-    .catch((err) => res.status(500).send({ message: `Ошибка ${err}` }));
+    .catch((err) => res.status(500).send({ message: `Ошибка 500: ${err}` }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -42,13 +42,18 @@ module.exports.likeCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: ownerId } }, { new: true })
     .then((card) => {
-      res.send(card);
+      if(!card){
+        return res.status(404).send({ message: 'Ошибка 404: Карточка с указанным id не найдена.' });
+      }else{
+        return res.send(card);
+      }
+
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: 'Ошибка 404: Карточка с указанным id не найдена.' });
+        return res.status(400).send({ message: 'Ошибка 400: Переданы некорректные данные для постановки лайка.' });
       }
-      return res.status(500).send({ message: `Oops! ${err}` });
+      return res.status(500).send({ message: `Ошибка 500: ${err}` });
     });
 };
 
@@ -57,11 +62,15 @@ module.exports.dislikeCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: ownerId } }, { new: true })
     .then((card) => {
-      res.send(card);
+      if(!card){
+        return res.status(404).send({ message: 'Ошибка 404: Карточка с указанным id не найдена.' });
+      }else{
+        return res.send(card);
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: 'Ошибка 404: Карточка с указанным id не найдена.' });
+        return res.status(400).send({ message: 'Ошибка 400: Переданы некорректные данные для снятия лайка.' });
       }
       return res.status(500).send({ message: `Ошибка 500: ${err.message}` });
     });
