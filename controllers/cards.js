@@ -42,12 +42,10 @@ module.exports.likeCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: ownerId } }, { new: true })
     .then((card) => {
-      if(!card){
+      if (!card) {
         return res.status(404).send({ message: 'Ошибка 404: Карточка с указанным id не найдена.' });
-      }else{
-        return res.send(card);
       }
-
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -62,11 +60,10 @@ module.exports.dislikeCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: ownerId } }, { new: true })
     .then((card) => {
-      if(!card){
+      if (!card) {
         return res.status(404).send({ message: 'Ошибка 404: Карточка с указанным id не найдена.' });
-      }else{
-        return res.send(card);
       }
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
