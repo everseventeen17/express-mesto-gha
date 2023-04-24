@@ -27,11 +27,14 @@ module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndDelete(cardId)
     .then((card) => {
-      res.send(card);
+      if (!card) {
+        return res.status(404).send({ message: 'Ошибка 404: Карточка с указанным id не найдена.' });
+      }
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: 'Ошибка 404: Карточка с указанным id не найдена.' });
+        return res.status(400).send({ message: 'Ошибка 400: Переданы некорректные данные при удалении карточки.' });
       }
       return res.status(500).send({ message: `Ошибка 500: ${err.message}` });
     });
