@@ -1,18 +1,22 @@
 const User = require('../models/user');
+const {
+  NOT_FOUND_ERROR_CODE, BAD_REQUEST_ERROR_CODE,
+  SERVER_ERROR_CODE, SUCCESS_CODE,
+} = require('../utils/constants');
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Ошибка 404: пользователь по указанному id не найден' });
+        return res.status(NOT_FOUND_ERROR_CODE).send({ message: `Ошибка ${NOT_FOUND_ERROR_CODE}: пользователь по указанному id не найден` });
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Ошибка 400: некорректынй id' });
+        return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: некорректынй id` });
       }
-      return res.status(500).send({ message: `Ошибка 500: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
     });
 };
 
@@ -21,20 +25,20 @@ module.exports.getUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => res.status(500).send({ message: `Ошибка 500: ${err.message}` }));
+    .catch((err) => res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` }));
 };
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => {
-      res.send({ user });
+      res.status(SUCCESS_CODE).send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка 400: Переданы некорректные данные при создании пользователя' });
+        return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные при создании пользователя` });
       }
-      return res.status(500).send({ message: `Ошибка 500: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
     });
 };
 
@@ -47,9 +51,9 @@ module.exports.updateProfileInfo = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка 400: Переданы некорректные данные при обновлении профиля' });
+        return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные при обновлении профиля` });
       }
-      return res.status(500).send({ message: `Ошибка 500: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
     });
 };
 
@@ -62,8 +66,8 @@ module.exports.updateProfileAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Ошибка 400: Переданы некорректные данные при обновлении аватара' });
+        return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные при обновлении аватара` });
       }
-      return res.status(500).send({ message: `Ошибка 500: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
     });
 };
