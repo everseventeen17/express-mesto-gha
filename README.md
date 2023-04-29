@@ -1,6 +1,11 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
 
+ССЫЛКА НА РЕПОЗИТОРИЙ https://github.com/everseventeen17/express-mesto-gha
+
+В ходе работы над проектом был развернут сервер на node.js,
+также реализована работа с базами данных mongoDB
+
 
 ## Директории
 
