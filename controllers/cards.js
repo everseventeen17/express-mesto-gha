@@ -9,8 +9,8 @@ module.exports.getCards = (req, res) => {
     .then((cards) => {
       res.send(cards);
     })
-    .catch((err) => {
-      res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err}` });
+    .catch(() => {
+      res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };
 
@@ -25,7 +25,7 @@ module.exports.createCard = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные при создании карточки` });
       }
-      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };
 
@@ -42,7 +42,7 @@ module.exports.deleteCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные при удалении карточки.` });
       }
-      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка  ${SERVER_ERROR_CODE}: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка  ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };
 
@@ -60,7 +60,7 @@ module.exports.likeCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные для постановки лайка.` });
       }
-      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка  ${SERVER_ERROR_CODE}: ${err}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка  ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };
 
@@ -78,6 +78,6 @@ module.exports.dislikeCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные для снятия лайка.` });
       }
-      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка  ${SERVER_ERROR_CODE}: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка  ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };

@@ -16,7 +16,7 @@ module.exports.getUser = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: некорректынй id` });
       }
-      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };
 
@@ -25,7 +25,7 @@ module.exports.getUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` }));
+    .catch(() => res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: На сервере произошла ошибка` }));
 };
 
 module.exports.createUser = (req, res) => {
@@ -38,7 +38,7 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные при создании пользователя` });
       }
-      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };
 
@@ -53,7 +53,7 @@ module.exports.updateProfileInfo = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные при обновлении профиля` });
       }
-      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };
 
@@ -68,6 +68,6 @@ module.exports.updateProfileAvatar = (req, res) => {
       if (err.name === 'ValidationError') {
         return res.status(BAD_REQUEST_ERROR_CODE).send({ message: `Ошибка ${BAD_REQUEST_ERROR_CODE}: Переданы некорректные данные при обновлении аватара` });
       }
-      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: ${err.message}` });
+      return res.status(SERVER_ERROR_CODE).send({ message: `Ошибка ${SERVER_ERROR_CODE}: На сервере произошла ошибка` });
     });
 };
