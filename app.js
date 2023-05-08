@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
 
@@ -12,6 +13,7 @@ const auth = require('./middlewares/auth');
 
 const app = express();
 app.use(cookieParser());
+app.use(errors());
 app.use(express.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
