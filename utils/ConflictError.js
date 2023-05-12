@@ -1,9 +1,9 @@
-const CONFLICT_ERROR_CODE = require('constants');
+const constants = require('constants');
 
 class ConflictError extends Error {
   constructor(message) {
     super(`Ошибка 409 :${message}`);
-    this.statusCode = CONFLICT_ERROR_CODE;
+    this.statusCode = constants.CONFLICT_ERROR_CODE;
   }
 }
 

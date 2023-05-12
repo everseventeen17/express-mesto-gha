@@ -1,24 +1,23 @@
 const userRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const {
-  getUsers, getUser, createUser, getMe,
+  getUsers, getUser, getMe,
   updateProfileInfo, updateProfileAvatar,
 } = require('../controllers/users');
 
 userRouter.get('/', getUsers);
 userRouter.get('/me', getMe);
-userRouter.get('/:userId', getUser);
 
-userRouter.post(
-  '/',
+userRouter.get(
+  '/:userId',
   celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
+    params: Joi.object().keys({
+      userId: Joi.string().alphanum().length(24),
     }),
   }),
-  createUser,
+  getUser,
 );
+
 userRouter.patch(
   '/me',
   celebrate({
