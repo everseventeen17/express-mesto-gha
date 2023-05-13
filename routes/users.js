@@ -4,6 +4,7 @@ const {
   getUsers, getUser, getMe,
   updateProfileInfo, updateProfileAvatar,
 } = require('../controllers/users');
+const constants = require('../utils/constants');
 
 userRouter.get('/', getUsers);
 userRouter.get('/me', getMe);
@@ -32,7 +33,7 @@ userRouter.patch(
   '/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().required().min(2).uri(),
+      avatar: Joi.string().required().pattern(constants.regExp),
     }),
   }),
   updateProfileAvatar,
