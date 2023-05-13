@@ -10,8 +10,8 @@ function handleErrors(err, res) {
   if (err.code === 11000) {
     return res.status(constants.CONFLICT_ERROR_CODE).send({ message: `Ошибка ${constants.CONFLICT_ERROR_CODE}: пользователь с данным email уже существует` });
   }
-  if (err instanceof NotFoundError || err instanceof UnauthorizedError
-    || err instanceof ForbiddenError) {
+  if (err instanceof UnauthorizedError || err instanceof ForbiddenError
+    || err instanceof NotFoundError) {
     const { message } = err;
     return res.status(err.statusCode).send({ message });
   }
