@@ -1,4 +1,4 @@
-const constants = require('constants');
+const constants = require('./constants');
 
 class NotFoundError extends Error {
   constructor(message) {
@@ -7,4 +7,4 @@ class NotFoundError extends Error {
   }
 }
 
-module.exports = { NotFoundError };
+module.exports = NotFoundError;

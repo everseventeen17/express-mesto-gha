@@ -1,19 +1,22 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const { UnauthorizedError } = require('../utils/UnauthorizedError');
 
 const { JWT_SECRET } = process.env;
+
+const authError = (res) => {
+  res.status(401).send({ message: 'Вам необходимо авторизоваться' });
+};
 
 module.exports = async (req, res, next) => {
   const cookieAuth = req.cookies.jwt;
   if (!cookieAuth) {
-    return next(new UnauthorizedError('Вам необходимо авторизоваться'));
+    return authError(res);
   }
   let payload;
   try {
     payload = await jwt.verify(cookieAuth, JWT_SECRET);
   } catch (err) {
-    return next(new UnauthorizedError('Вам необходимо авторизоваться'));
+    return authError(res);
   }
   req.user = payload;
   return next();

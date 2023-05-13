@@ -3,15 +3,14 @@ const bcrypt = require('bcryptjs');
 
 const { JWT_SECRET } = process.env;
 const User = require('../models/user');
-const {
-  SUCCESS_CODE,
-} = require('../utils/constants');
+const { SUCCESS_CODE } = require('../utils/constants');
+
+const handleErrors = require('../utils/handleErrors');
 const { NotFoundError } = require('../utils/NotFoundError');
 const { BadRequestError } = require('../utils/BadRequestError');
 const { UnauthorizedError } = require('../utils/UnauthorizedError');
-const { ConflictError } = require('../utils/ConflictError');
 
-module.exports.getUser = (req, res, next) => {
+module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
@@ -19,35 +18,34 @@ module.exports.getUser = (req, res, next) => {
       }
       return res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорретный id'));
-        return;
-      }
-      next(err);
-    });
+    .catch((err) => handleErrors(err, res));
 };
 
-module.exports.getMe = (req, res, next) => {
+module.exports.getMe = (req, res) => {
   const { _id } = req.user;
-  User.find({ _id })
-    .then((user) => res.send({ ...user }))
-    .catch(next);
+  User.findById({ _id })
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      return res.send(user);
+    })
+    .catch((err) => handleErrors(err, res));
 };
 
-module.exports.getUsers = (req, res, next) => {
+module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => {
       res.send(users);
     })
-    .catch(next);
+    .catch((err) => handleErrors(err, res));
 };
 
-module.exports.createUser = (req, res, next) => {
+module.exports.createUser = (req, res) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  if (!email || !password) throw new BadRequestError('Email или пароль не могут быть пустыми');
+  if (!email || !password) throw new BadRequestError({ message: 'Email или пароль не могут быть пустыми' });
   const createUser = (hash) => User.create({
     name, about, avatar, email, password: hash,
   });
@@ -55,35 +53,27 @@ module.exports.createUser = (req, res, next) => {
     .hash(password, 10)
     .then((hash) => createUser(hash))
     .then((user) => {
-      res.status(SUCCESS_CODE).send({ user });
+      res.status(SUCCESS_CODE).send({
+        user: {
+          id: user._id,
+          email: user.email,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+        },
+      });
     })
-    .catch((err) => {
-      if (err.code === 11000) {
-        return next(new ConflictError('Пользователь уже существует'));
-      }
-      if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Введены некорректные данные при создании пользователя'));
-      }
-      return next(err);
-    });
+    .catch((err) => handleErrors(err, res));
 };
 
-module.exports.updateProfileInfo = (req, res, next) => {
+module.exports.updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Введены некорретные данные при обновлении профиля'));
-      }
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Передан некорретный id'));
-      }
-      return next(err);
-    });
+    .catch((err) => handleErrors(err, res));
 };
 
 module.exports.updateProfileAvatar = (req, res, next) => {
@@ -106,10 +96,10 @@ module.exports.updateProfileAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-        expiresIn: '7d',
+        expiresIn: '1d',
       });
       res.cookie('jwt', token, {
         maxAge: 3600000,

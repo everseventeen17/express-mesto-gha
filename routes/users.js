@@ -12,7 +12,7 @@ userRouter.get(
   '/:userId',
   celebrate({
     params: Joi.object().keys({
-      userId: Joi.string().alphanum().length(24),
+      userId: Joi.string().alphanum().hex().length(24),
     }),
   }),
   getUser,
@@ -32,7 +32,7 @@ userRouter.patch(
   '/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().required().uri(),
+      avatar: Joi.string().required().min(2).uri(),
     }),
   }),
   updateProfileAvatar,
