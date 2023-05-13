@@ -4,10 +4,9 @@ const {
 } = require('../utils/constants');
 const handleErrors = require('../utils/handleErrors');
 const { NotFoundError } = require('../utils/NotFoundError');
-const { BadRequestError } = require('../utils/BadRequestError');
 const { ForbiddenError } = require('../utils/ForbiddenError');
 
-module.exports.getCards = (req, res, next) => {
+module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
       res.send(cards);
@@ -15,7 +14,7 @@ module.exports.getCards = (req, res, next) => {
     .catch((err) => handleErrors(err, res));
 };
 
-module.exports.createCard = (req, res, next) => {
+module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
   Card.create({ name, link, owner: ownerId })
@@ -25,7 +24,7 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => handleErrors(err, res));
 };
 
-module.exports.deleteCard = (req, res, next) => {
+module.exports.deleteCard = (req, res) => {
   const removeCard = () => {
     Card.findByIdAndRemove(req.params.cardId)
       .then((card) => {
@@ -55,7 +54,7 @@ module.exports.deleteCard = (req, res, next) => {
     .catch((err) => handleErrors(err, res));
 };
 
-module.exports.likeCard = (req, res, next) => {
+module.exports.likeCard = (req, res) => {
   const ownerId = req.user._id;
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: ownerId } }, { new: true })
