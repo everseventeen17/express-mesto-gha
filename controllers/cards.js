@@ -2,7 +2,6 @@ const Card = require('../models/card');
 const {
   SUCCESS_CODE,
 } = require('../utils/constants');
-const handleErrors = require('../utils/handleErrors');
 const { NotFoundError } = require('../utils/NotFoundError');
 const { ForbiddenError } = require('../utils/ForbiddenError');
 const { BadRequestError } = require('../utils/BadRequestError');
@@ -37,7 +36,7 @@ module.exports.deleteCard = (req, res, next) => {
       .then((card) => {
         res.status(SUCCESS_CODE).send(card);
       })
-      .catch((err) => handleErrors(err, res));
+      .catch(next);
   };
 
   Card.findById(req.params.cardId)

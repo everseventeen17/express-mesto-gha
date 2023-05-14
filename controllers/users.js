@@ -5,9 +5,9 @@ const { JWT_SECRET = 'default' } = process.env;
 const User = require('../models/user');
 const { SUCCESS_CODE } = require('../utils/constants');
 
-const handleErrors = require('../utils/handleErrors');
 const { NotFoundError } = require('../utils/NotFoundError');
 const { ConflictError } = require('../utils/ConflictError');
+const { BadRequestError } = require('../utils/BadRequestError');
 
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
@@ -32,12 +32,12 @@ module.exports.getMe = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => handleErrors(err, res));
+    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -65,6 +65,11 @@ module.exports.createUser = (req, res, next) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь уже существует'));
       }
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при создании пользователя'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -75,7 +80,13 @@ module.exports.updateProfileInfo = (req, res, next) => {
     .then((user) => {
       res.send(user);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при обновлении пользователя'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.updateProfileAvatar = (req, res, next) => {
@@ -85,7 +96,13 @@ module.exports.updateProfileAvatar = (req, res, next) => {
     .then((users) => {
       res.send(users);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при обновлении пользователя'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.login = (req, res, next) => {

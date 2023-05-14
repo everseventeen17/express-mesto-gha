@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 
 const { NotFoundError } = require('./utils/NotFoundError');
-
+const handleErrors = require('./utils/handleErrors');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const authRouter = require('./routes/auth');
@@ -36,11 +36,6 @@ app.use('*', (req, res, next) => {
   next(new NotFoundError('По указанному вами адресу ничего не найдено'));
 });
 
-app.use((error, req, res) => {
-  // Установка кода состояния ответа
-  res.status(error.statusCode);
-  // Отправка ответа
-  res.json({ message: error.message });
-});
+app.use(handleErrors);
 
 app.listen(PORT);
