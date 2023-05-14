@@ -36,7 +36,7 @@ module.exports.deleteCard = (req, res) => {
         if (ownerId !== userId) {
           throw new ForbiddenError('Невозможно удалить чужую карточку');
         }
-        res.send(card);
+        res.status(SUCCESS_CODE).send(card);
       })
       .catch((err) => handleErrors(err, res));
   };

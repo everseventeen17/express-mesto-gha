@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 
+const handleErrors = require('./utils/handleErrors')
+const { NotFoundError } = require('./utils/NotFoundError');
+const adressError = new NotFoundError('По указанному вами адресу ничего не найдено');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const authRouter = require('./routes/auth');
@@ -12,7 +15,7 @@ const { PORT = 3000 } = process.env;
 const auth = require('./middlewares/auth');
 
 const app = express();
-const NotFoundError = require('./utils/NotFoundError');
+
 
 app.use(cookieParser());
 app.use(express.json());
@@ -38,8 +41,8 @@ app.use('/cards', cardsRouter);
 
 app.use(errors());
 
-app.use('*', (req, res, next) => {
-  next(new NotFoundError('Страницы не существует'));
+app.use('*', (req, res) => {
+  handleErrors(adressError, res);
 });
 
 app.listen(PORT, () => {
