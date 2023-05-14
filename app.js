@@ -24,14 +24,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   autoIndex: true,
   useUnifiedTopology: true,
   useNewUrlParser: true,
-})
-  .then(() => {
-    console.log('Подключено к базе данных по адресу mongodb://localhost:27017/mestodb');
-  })
-  .catch((err) => {
-    console.log('Произошла ошибка при подключении к базе данных');
-    console.error(err);
-  });
+});
 
 app.use('/', authRouter);
 app.use(auth);
@@ -45,6 +38,4 @@ app.use('*', (req, res) => {
   handleErrors(adressError, res);
 });
 
-app.listen(PORT, () => {
-  console.log(`Приложение запущено в порту ${PORT}`);
-});
+app.listen(PORT);

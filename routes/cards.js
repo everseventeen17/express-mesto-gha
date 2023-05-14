@@ -4,7 +4,7 @@ const {
   getCards, createCard, deleteCard,
   likeCard, dislikeCard,
 } = require('../controllers/cards');
-const constants = require("../utils/constants");
+const constants = require('../utils/constants');
 
 cardRouter.get('/', getCards);
 
