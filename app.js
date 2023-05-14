@@ -4,10 +4,8 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 
-const handleErrors = require('./utils/handleErrors');
 const { NotFoundError } = require('./utils/NotFoundError');
 
-const adressError = new NotFoundError('По указанному вами адресу ничего не найдено');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const authRouter = require('./routes/auth');
@@ -17,8 +15,8 @@ const auth = require('./middlewares/auth');
 
 const app = express();
 
-app.use(cookieParser());
 app.use(express.json());
+app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   autoIndex: true,
@@ -34,8 +32,15 @@ app.use('/cards', cardsRouter);
 
 app.use(errors());
 
-app.use('*', (req, res) => {
-  handleErrors(adressError, res);
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('По указанному вами адресу ничего не найдено'));
+});
+
+app.use((error, req, res) => {
+  // Установка кода состояния ответа
+  res.status(error.statusCode);
+  // Отправка ответа
+  res.json({ message: error.message });
 });
 
 app.listen(PORT);
