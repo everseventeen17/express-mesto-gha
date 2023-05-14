@@ -8,7 +8,6 @@ const { SUCCESS_CODE } = require('../utils/constants');
 const handleErrors = require('../utils/handleErrors');
 const { NotFoundError } = require('../utils/NotFoundError');
 const { BadRequestError } = require('../utils/BadRequestError');
-const { UnauthorizedError } = require('../utils/UnauthorizedError');
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
@@ -94,7 +93,7 @@ module.exports.updateProfileAvatar = (req, res, next) => {
     });
 };
 
-module.exports.login = (req, res, next) => {
+module.exports.login = (req, res) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
@@ -108,7 +107,5 @@ module.exports.login = (req, res, next) => {
       });
       res.send({ token });
     })
-    .catch(() => {
-      next(new UnauthorizedError('Необходимо авторизоваться'));
-    });
+    .catch((err) => handleErrors(err, res));
 };
