@@ -36,11 +36,11 @@ app.use('*', (req, res, next) => {
   next(new NotFoundError('По указанному вами адресу ничего не найдено'));
 });
 
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
   // Установка кода состояния ответа
-  res.status(error.statusCode)
+  res.status(error.statusCode);
   // Отправка ответа
-  res.json({ message: error.message })
-})
+  res.json({ message: error.message });
+});
 
 app.listen(PORT);
